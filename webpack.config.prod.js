@@ -1,33 +1,30 @@
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-const MinifyPlugin = require("babel-minify-webpack-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const MinifyPlugin = require('babel-minify-webpack-plugin');
 const path = require('path');
 
-module.exports = function (env, argv) {
+module.exports = function(env, argv) {
   return {
     mode: 'production',
-    entry: [
-      './src/app.js'
-    ],
+    entry: ['./src/app.js'],
     optimization: {
-      minimizer: [
-        new OptimizeCSSAssetsPlugin()
-      ]
-    }
-    ,
+      minimizer: [new OptimizeCSSAssetsPlugin()],
+    },
     plugins: [
       new CleanWebpackPlugin(['dist']),
       new HtmlWebpackPlugin({
         title: 'Webpack starter project',
-        template: path.resolve('./src/index.html')
+        template: path.resolve('./src/index.html'),
+        // MINIMIZAR HTML
+        minify: false,
       }),
       new MiniCssExtractPlugin({
-        filename: "[name].css",
-        chunkFilename: "[id].css"
+        filename: '[name].css',
+        chunkFilename: '[id].css',
       }),
-      new MinifyPlugin()
+      new MinifyPlugin(),
     ],
     module: {
       rules: [
@@ -35,9 +32,16 @@ module.exports = function (env, argv) {
           test: /\.scss$/,
           use: [
             MiniCssExtractPlugin.loader,
-            "css-loader",
-            "sass-loader"
-          ]
+            'css-loader',
+            {
+              loader: 'postcss-loader',
+              options: {
+                sourceMap: true,
+                config: { path: 'postcss.config.js' },
+              },
+            },
+            'sass-loader',
+          ],
         },
         {
           test: /\.m?js$/,
@@ -45,30 +49,30 @@ module.exports = function (env, argv) {
           use: {
             loader: 'babel-loader',
             options: {
-              presets: ['@babel/preset-env']
-            }
-          }
+              presets: ['@babel/preset-env'],
+            },
+          },
         },
         {
           test: /\.(pdf|doc|docx|xls|xlsx|txt|csv|tsv)$/,
           use: [
             {
-              loader: "file-loader",
+              loader: 'file-loader',
               options: {
                 outputPath: './files',
-                name: "[name].[ext]",
+                name: '[name].[ext]',
               },
-            }
-          ]
+            },
+          ],
         },
         {
           test: /\.(jpg|jpeg|gif|png|svg|webp)$/,
           use: [
             {
-              loader: "file-loader",
+              loader: 'file-loader',
               options: {
                 outputPath: './images',
-                name: "[name].[ext]",
+                name: '[name].[ext]',
               },
             },
             {
@@ -76,7 +80,7 @@ module.exports = function (env, argv) {
               options: {
                 mozjpeg: {
                   progressive: false,
-                  quality: 45
+                  quality: 45,
                 },
                 // optipng.enabled: false will disable optipng
                 optipng: {
@@ -84,17 +88,17 @@ module.exports = function (env, argv) {
                 },
                 pngquant: {
                   quality: '65-90',
-                  speed: 4
+                  speed: 4,
                 },
                 gifsicle: {
                   interlaced: true,
-                  optimizationLevel: 3
+                  optimizationLevel: 3,
                 },
                 // the webp option will enable WEBP
                 webp: {
-                  quality: 20
-                }
-              }
+                  quality: 20,
+                },
+              },
             },
           ],
         },
@@ -105,21 +109,21 @@ module.exports = function (env, argv) {
               loader: 'file-loader',
               options: {
                 name: '[name].[ext]',
-                outputPath: 'fonts/'
-              }
-            }
-          ]
+                outputPath: 'fonts/',
+              },
+            },
+          ],
         },
         {
           test: /\.html$/,
           use: {
             loader: 'html-loader',
             options: {
-              attrs: [':src', ':href']
-            }
-          }
+              attrs: [':src', ':href'],
+            },
+          },
         },
-      ]
-    }
+      ],
+    },
   };
-}
+};
