@@ -8,7 +8,7 @@
     "watch": "npx webpack --watch",
     "start": "webpack-dev-server"
   },
-  "author": "",
+  "author": "ivan vilches",
   "license": "ISC",
   "browserslist": [
     "defaults",
